@@ -1,6 +1,9 @@
 Sub convert_ppt_to_txt()
-    
-    Call ungroup_shapes
+
+    Dim p As Presentation
+    Set p = Presentations.Open("C:\Users\Aaron\Desktop\ppt-to-convert.pptx")
+    ' Set p = PowerPointApp.Presentations.Open("C:\Users\Aaron\Desktop\ppt-to-convert.pptx")
+    Call ungroup_shapes(p)
     
     Dim next_string_to_append As String
     
@@ -10,13 +13,20 @@ Sub convert_ppt_to_txt()
     number_only_output = "C:\Users\Aaron\Desktop\Examine_1_Numbers.txt"
     
     ' cannot set p as active presentation otherwise it's going to impact other opened ppt files
-    Dim p As Presentation: Set p = ActivePresentation
+    
     Dim s As Slide
     Dim sh As Shape
+    
     For Each s In p.Slides
+    
+        Call WriteStringToFile(all_text_output, "                ")
+        Call WriteStringToFile(all_text_output, "-------------       Beginning of Page       -------------")
+        Call WriteStringToFile(all_text_output, "                ")
+        
         For Each sh In s.Shapes
             If sh.HasTextFrame Then
                 If sh.TextFrame.HasText Then
+                
                     next_string_to_append = sh.TextFrame.TextRange.Text
                     Call WriteStringToFile(all_text_output, next_string_to_append)
                     
@@ -27,6 +37,11 @@ Sub convert_ppt_to_txt()
                 End If
             End If
         Next
+        
+        Call WriteStringToFile(all_text_output, "                ")
+        Call WriteStringToFile(all_text_output, "-------------          End of Page          -------------")
+        Call WriteStringToFile(all_text_output, "                ")
+        
     Next
     
     Call SendFileToNotePad(all_text_output)
@@ -49,7 +64,6 @@ Function containsNumber(inputString As String) As Boolean
         End If
     Next
 
-
 End Function
 
 
@@ -62,10 +76,7 @@ End Function
 Sub WriteStringToFile(pFileName As String, pString As String)
 
     Dim intFileNum As Integer
-    
     intFileNum = FreeFile
-                ' change Output to Append if you want to add to an existing file
-                ' rather than creating a new file each time
     Open pFileName For Append As intFileNum
     Print #intFileNum, pString
     Close intFileNum
@@ -73,26 +84,26 @@ Sub WriteStringToFile(pFileName As String, pString As String)
 End Sub
 
 Sub SendFileToNotePad(pFileName As String)
+    
     Dim lngReturn As Long
-
     lngReturn = Shell("NOTEPAD.EXE " & pFileName, vbNormalFocus)
 
 End Sub
 
-Sub ungroup_shapes()
+Sub ungroup_shapes(p As Presentation)
     
-    Dim p As Presentation: Set p = ActivePresentation
     Dim s As Slide
     Dim sh As Shape
     
+    ' How many layers of grouped shapes are there, normally 6 layers would unwrap everything
+    
     For Each s In p.Slides
-        For x = 1 To 10
+        For x = 1 To 6
             For Each sh In s.Shapes
                 If sh.Type = msoGroup Then sh.Ungroup
             Next
         Next x
     Next
-    
     
 End Sub
 
