@@ -62,7 +62,7 @@ Function containsNumber(inputString As String, number_output_file As String) As 
     For counter = 1 To Len(inputString)
         
          ' if the char is a digit
-        If IsNumeric(Mid(inputString, counter, 1)) Then
+        If IsNumeric(Mid(inputString, counter, 1)) Or InStr(Mid(inputString, counter, 1), "%") > 0 Then
             If extracting_switch Then
                 j = counter
                 If counter = Len(inputString) Then
@@ -75,6 +75,10 @@ Function containsNumber(inputString As String, number_output_file As String) As 
             End If
         
         ' if the char is not a digit
+        ' ElseIf InStr(Mid(inputString, counter, 1), ["%", "@"]) > 0 Then
+        
+        
+            MsgBox Mid(inputString, counter, 1)
         ElseIf extracting_switch Then
             Call WriteStringToFile(number_output_file, Mid(inputString, i, j - i + 1))
             extracting_switch = False
