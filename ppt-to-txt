@@ -19,9 +19,7 @@ Sub convert_ppt_to_txt()
     
     For Each s In p.Slides
     
-        Call WriteStringToFile(all_text_output, "                ")
-        Call WriteStringToFile(all_text_output, "-------------       Beginning of Page       -------------")
-        Call WriteStringToFile(all_text_output, "                ")
+        Call WriteStringToFile(all_text_output, "        ")
         
         For Each sh In s.Shapes
             If sh.HasTextFrame Then
@@ -38,9 +36,7 @@ Sub convert_ppt_to_txt()
             End If
         Next
         
-        Call WriteStringToFile(all_text_output, "                ")
-        Call WriteStringToFile(all_text_output, "-------------          End of Page          -------------")
-        Call WriteStringToFile(all_text_output, "                ")
+        Call WriteStringToFile(all_text_output, "        ")
         
     Next
     
