@@ -1,7 +1,7 @@
 Sub convert_ppt_to_txt()
 
     Dim p As Presentation
-    Set p = Presentations.Open("C:\Users\Aaron\Desktop\ppt-to-convert.pptx")
+    Set p = Presentations.Open("C:\Users\Aaron\Desktop\ppt-test\ppt-to-convert.pptx")
     ' Set p = PowerPointApp.Presentations.Open("C:\Users\Aaron\Desktop\ppt-to-convert.pptx")
     Call ungroup_shapes(p)
     
@@ -9,8 +9,8 @@ Sub convert_ppt_to_txt()
     
     Dim all_text_output As String
     Dim number_only_output As String
-    all_text_output = "C:\Users\Aaron\Desktop\Examine_2_All_Text.txt"
-    number_only_output = "C:\Users\Aaron\Desktop\Examine_1_Numbers.txt"
+    all_text_output = "C:\Users\Aaron\Desktop\ppt-test\Examine_2_All_Text.txt"
+    number_only_output = "C:\Users\Aaron\Desktop\ppt-test\Examine_1_Numbers.txt"
     
     ' cannot set p as active presentation otherwise it's going to impact other opened ppt files
     
@@ -28,9 +28,9 @@ Sub convert_ppt_to_txt()
                     next_string_to_append = sh.TextFrame.TextRange.Text
                     Call WriteStringToFile(all_text_output, next_string_to_append)
                     
-                    Call WriteStringToFile(number_only_output, "        ")
+                    'Call WriteStringToFile(number_only_output, "        ")
                     Call containsNumber(next_string_to_append, number_only_output)
-                    Call WriteStringToFile(number_only_output, "        ")
+                    'Call WriteStringToFile(number_only_output, "        ")
 
                 End If
             End If
@@ -45,8 +45,47 @@ Sub convert_ppt_to_txt()
     
 End Sub
 
-
 Function containsNumber(inputString As String, number_output_file As String) As Boolean
+
+    Dim counter As Integer
+    Dim hasNumber As Boolean
+    Dim extracting_switch As Boolean
+    Dim i As Integer
+    Dim j As Integer
+    
+    i = 1
+    j = 1
+    
+    containsNumber = False
+    extracting_switch = False
+    
+    For counter = 1 To Len(inputString)
+        
+         ' if the char is a digit
+        If IsNumeric(Mid(inputString, counter, 1)) Then
+            If extracting_switch Then
+                j = counter
+                If counter = Len(inputString) Then
+                    Call WriteStringToFile(number_output_file, Mid(inputString, i, j - i + 1))
+                End If
+            Else
+                extracting_switch = True
+                i = counter
+                j = counter
+            End If
+        
+        ' if the char is not a digit
+        ElseIf extracting_switch Then
+            Call WriteStringToFile(number_output_file, Mid(inputString, i, j - i + 1))
+            extracting_switch = False
+        Else
+        End If
+                    
+    Next
+
+End Function
+
+Function containsNumber2(inputString As String, number_output_file As String) As Boolean
 
     Dim counter As Integer
     Dim hasNumber As Boolean
