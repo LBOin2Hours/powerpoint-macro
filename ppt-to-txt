@@ -28,9 +28,9 @@ Sub convert_ppt_to_txt()
                     next_string_to_append = sh.TextFrame.TextRange.Text
                     Call WriteStringToFile(all_text_output, next_string_to_append)
                     
-                    If containsNumber(next_string_to_append) Then
-                        Call WriteStringToFile(number_only_output, next_string_to_append)
-                    End If
+                    Call WriteStringToFile(number_only_output, "        ")
+                    Call containsNumber(next_string_to_append, number_only_output)
+                    Call WriteStringToFile(number_only_output, "        ")
 
                 End If
             End If
@@ -46,26 +46,43 @@ Sub convert_ppt_to_txt()
 End Sub
 
 
-Function containsNumber(inputString As String) As Boolean
+Function containsNumber(inputString As String, number_output_file As String) As Boolean
 
     Dim counter As Integer
     Dim hasNumber As Boolean
+    Dim extracting_switch As Boolean
+    Dim i As Integer
+    Dim j As Integer
+    
+    i = 1
+    j = 1
     
     containsNumber = False
+    extracting_switch = False
     
     For counter = 1 To Len(inputString)
+        
+        ' if the char is a digit
         If IsNumeric(Mid(inputString, counter, 1)) Then
-            containsNumber = True
-            Exit For
+            extracting_switch = True
+            If i = j Then
+                i = counter
+                j = counter + 1
+            Else
+                j = counter
+            End If
+        ' if the char is not a digit
+        ElseIf extracting_switch Then
+            Call WriteStringToFile(number_output_file, Mid(inputString, i, j - i + 1))
+            i = counter
+            j = counter
+            extracting_switch = False
+            
+        Else
         End If
+        
     Next
 
-End Function
-
-
-
-Function IsAlpha2(s) As Boolean
-    IsAlpha2 = Len(s) And Not s Like "*[!a-zA-Z. ]*"
 End Function
 
 
